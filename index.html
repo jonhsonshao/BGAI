@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BGAI 数字资产生态</title>
+<script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+}
+:root{
+    --era-blue:#00b8ff;
+    --era-purple:#924cff;
+    --main-gradient:linear-gradient(90deg,#00b8ff,#924cff);
+}
+body{
+    background:#05050c;
+    background-image:
+        radial-gradient(circle at 15% 15%, rgba(10, 20, 70, 0.35) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(5, 35, 60, 0.3) 0%, transparent 45%);
+    min-height:100vh;
+    color:#e8edff;
+    overflow-x:hidden;
+}
+/* 顶部导航栏 */
+.header-bar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:16px 32px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(8,8,16,0.6);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    z-index:99;
+}
+.logo-wrap{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+.logo-text{
+    font-size:22px;
+    font-weight:600;
+    background:var(--main-gradient);
+    -webkit-background-clip:text;
+    color:transparent;
+    letter-spacing:1px;
+}
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    max-width:50%; /* 右侧整体不越过屏幕中线 */
+    justify-content:flex-end;
+}
+.wallet-box{
+    padding:6px 10px;
+    border-radius:8px;
+    border:1px solid rgba(0,184,255,0.3);
+    color:var(--era-blue);
+    background:rgba(0,184,255,0.08);
+    font-size:12px; /* 缩小字体 */
+    cursor:pointer;
+    transition:0.25s;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:220px;
+}
+.wallet-box:hover{
+    box-shadow:0 0 12px rgba(0,184,255,0.25);
+}
+.menu-trigger{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.05);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    cursor:pointer;
+    transition:0.25s;
+    flex-shrink:0;
+}
+.menu-trigger:hover{
+    border-color:rgba(146,76,255,0.4);
+}
+.menu-trigger span{
+    width:22px;
+    height:2px;
+    background:#d0d8ff;
+    border-radius:1px;
+    transition:0.3s;
+}
+/* 侧边抽屉导航面板 */
+.side-nav{
+    position:fixed;
+    top:80px;
+    right:-320px;
+    width:300px;
+    background:rgba(12,12,26,0.85);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px 0 0 16px;
+    padding:30px;
+    transition:right 0.35s ease;
+    z-index:98;
+}
+.side-nav.open{
+    right:0;
+}
+.side-nav h3{
+    font-size:18px;
+    margin-bottom:24px;
+    color:#fff;
+    padding-bottom:12px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-item{
+    display:block;
+    width:100%;
+    padding:14px 16px;
+    margin-bottom:10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.06);
+    background:rgba(255,255,255,0.03);
+    text-align:left;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.25s;
+}
+.nav-item:nth-child(2){color:var(--era-blue);}
+.nav-item:nth-child(3){color:#b388ff;}
+.nav-item:nth-child(4){color:#66e8c0;}
+.nav-item:nth-child(5){color:#ffc460;}
+.nav-item:hover{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.15);
+}
+/* 主内容区域 */
+.main-wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:140px 20px 60px;
+}
+.hero-title{
+    text-align:center;
+    font-size:44px;
+    margin-bottom:24px;
+    background:var(--main-gradient);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+/* 项目说明卡片 */
+.desc-card{
+    background:rgba(12,12,24,0.65);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:36px;
+    border:1px solid rgba(255,255,255,0.08);
+    margin-bottom:30px;
+}
+.desc-card p{
+    color:#cbd4f0;
+    line-height:1.9;
+    font-size:16px;
+}
+/* 代币分配锁仓卡片 */
+.allocation-card{
+    background:rgba(12,12,24,0.65);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:36px;
+    border:1px solid rgba(0,184,255,0.12);
+    margin-bottom:50px;
+}
+.allocation-card h3{
+    font-size:22px;
+    color:var(--era-blue);
+    margin-bottom:22px;
+    text-shadow:0 0 8px rgba(0,184,255,0.3);
+}
+.allocation-card ul{
+    list-style:none;
+}
+.allocation-card li{
+    color:#cbd4f0;
+    font-size:16px;
+    line-height:2.2;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.allocation-card li:last-child{
+    border-bottom:none;
+}
+.card-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(460px,1fr));
+    gap:28px;
+}
+.card{
+    position:relative;
+    background:rgba(12,12,24,0.7);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:32px;
+    overflow:hidden;
+    transition:all 0.32s ease;
+}
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:20px;
+    padding:1px;
+    background:linear-gradient(135deg,transparent,rgba(255,255,255,0.08),transparent);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+    mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    pointer-events:none;
+}
+.card.pool1{--color:var(--era-blue);}
+.card.pool2{--color:#b388ff;}
+.card.pool3{--color:#66e8c0;}
+.card.pool4{--color:#ffc460;}
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 0 26px var(--color),0 8px 36px rgba(0,0,0,0.5);
+}
+.card:hover::before{
+    background:linear-gradient(135deg,var(--color),rgba(255,255,255,0.12),var(--color));
+}
+.card h2{
+    font-size:24px;
+    margin-bottom:14px;
+    color:var(--color);
+    text-shadow:0 0 10px var(--color);
+}
+.card p{
+    color:#a2b0e0;
+    line-height:1.7;
+    font-size:15px;
+    margin-bottom:24px;
+}
+.enter-btn{
+    padding:12px 26px;
+    border-radius:12px;
+    border:none;
+    font-size:15px;
+    cursor:pointer;
+    background:var(--main-gradient);
+    color:#fff;
+    box-shadow:0 0 14px rgba(146,76,255,0.28);
+    transition:0.25s;
+}
+.enter-btn:hover{
+    box-shadow:0 0 22px rgba(146,76,255,0.45);
+}
+.enter-btn:active{
+    transform:scale(0.96);
+}
+@media(max-width:540px){
+    .header-bar{padding:12px 16px;}
+    .logo-text{font-size:17px;}
+    .header-right{
+        max-width:50%; /* 手机端右侧区域最大50%屏幕，不越过中线 */
+        gap:10px;
+    }
+    .wallet-box{
+        font-size:11px;
+        padding:5px 8px;
+        max-width:140px;
+    }
+    .hero-title{font-size:26px;}
+    .desc-card{padding:20px 16px;}
+    .desc-card p{font-size:14px;}
+    .allocation-card{padding:20px 16px;}
+    .allocation-card li{font-size:13px; line-height:2;}
+    .card-grid{grid-template-columns:1fr;}
+    .side-nav{width:calc(100% - 20px);right:calc(-100% + 10px);}
+}
+</style>
+</head>
+<body>
+<!-- 顶部头部 -->
+<header class="header-bar">
+    <div class="logo-wrap">
+        <div class="logo-text">BGAI</div>
+    </div>
+    <div class="header-right">
+        <div class="wallet-box" id="walletBtn">连接钱包</div>
+        <div class="menu-trigger" id="menuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<!-- 侧边菜单 -->
+<div class="side-nav" id="sideMenu">
+    <h3>导航菜单</h3>
+    <div class="nav-item">代币兑换</div>
+    <div class="nav-item">流动性池</div>
+    <div class="nav-item">质押挖矿</div>
+    <div class="nav-item">收益查询</div>
+</div>
+
+<!-- 主内容 -->
+<div class="main-wrap">
+    <h1 class="hero-title">BGAI 生态</h1>
+
+    <!-- 项目说明大段文本 -->
+    <div class="desc-card">
+        <p>基于BSC公链搭建去中心化数字资产生态，一站式兑换、质押、流动性服务。该代币将区别于市场上其他各种韭菜币，土狗币，而是想要打造一个真正意义上有价值的区块链代币，通过强共识模型让所有参与者都可以找到归属，让市值做到稳步上涨，让代币价值体系越来越高，通过锁仓所有前期参与者的方式，来组建强有力的铁军体系，打造更有力的未来生态体系，同时，给予更多的人一个机会参与首发，也将给予更多的人自愿前来搭建生态体系。</p>
+    </div>
+
+    <!-- 代币分配与释放规则 -->
+    <div class="allocation-card">
+        <h3>代币分配与释放规则</h3>
+        <ul>
+            <li>代币总发行量21枚，发行价0.001U/枚</li>
+            <li>一号基金池（创始基金会）：5000 万枚，按照锁仓 2 年，2 年之后按照每月 5% 线性释放</li>
+            <li>二号基金池（共建基金会）：1 亿枚，锁仓 1 年，1 年之后按照每月 4% 线性释放，按照100U/份公开招募，招募价0.0005U/枚（开盘价的一半）</li>
+            <li>三号基金池（私募首批共识者）：1 亿枚，锁仓 180 天，180 天之后按照每天 1% 线性释放，按照10U/份公开招募，招募价0.0008U/枚（开盘价8折）</li>
+            <li>四号基金池：1 亿枚，质押挖矿，110 天获得 10% 数量增益方式获得（扩大共识机制）</li>
+            <li>五号矿池：2 亿枚，开盘价公平兑换（100 天内兑完截止，未兑完则全部销毁）（给所有人一个参与首发的机会）</li>
+            <li>六号矿池：2 亿枚，空投池，每个地址每 24 小时可领取一次空投，（100 天时间，领完为止，未领完销毁）（让更多的人认识我们，让更多人见证奇迹）</li>
+            <li>市值管理团队：3000万枚，锁仓1年，一年之后按照日释放1%</li>
+            <li>市场共识激励1：1000万枚，空投给基金会成员，空投方式由基金会投票决议</li>
+            <li>市场共识激励2：4000万枚，空投给市场共识成员，空投方式由基金会投票决议</li>
+            <li>LP底池建设：2000万枚</li>
+            <li>生态建设池：12.5亿</li>
+        </ul>
+    </div>
+
+    <div class="card-grid">
+        <div class="card pool1">
+            <h2>一号基金池</h2>
+            <p>一号基金池业务入口。</p>
+            <button class="enter-btn">立即进入</button>
+        </div>
+        <div class="card pool2">
+            <h2>二号基金池</h2>
+            <p>二号基金池业务入口。</p>
+            <button class="enter-btn">立即进入</button>
+        </div>
+        <div class="card pool3">
+            <h2>三号基金池</h2>
+            <p>三号基金池业务入口。</p>
+            <button class="enter-btn">立即进入</button>
+        </div>
+        <div class="card pool4">
+            <h2>四号基金池</h2>
+            <p>四号基金池业务入口。</p>
+            <button class="enter-btn">立即进入</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 侧边菜单开关
+const menuBtn = document.getElementById('menuBtn');
+const sideMenu = document.getElementById('sideMenu');
+menuBtn.onclick = function(){
+    sideMenu.classList.toggle('open');
+}
+
+// 钱包逻辑
+const walletBtn = document.getElementById("walletBtn");
+let web3;
+let currentAccount = null;
+const BSC_CHAIN_ID = 56;
+
+// 地址格式化 0x1234****5678
+function formatAddress(addr){
+    if(!addr) return "";
+    return addr.slice(0,6)+"****"+addr.slice(-4);
+}
+
+// 更新按钮显示状态
+function updateWalletUI(){
+    if(currentAccount){
+        walletBtn.innerText = ""+formatAddress(currentAccount);
+    }else{
+        walletBtn.innerText = "连接钱包";
+    }
+}
+
+// 切换BSC主网
+async function switchBSC(){
+    try{
+        await window.ethereum.request({
+            method:"wallet_switchEthereumChain",
+            params:[{chainId:"0x38"}]
+        })
+    }catch(e){
+        console.error("切换链失败",e);
+    }
+}
+
+// 获取账号
+async function getAccounts(){
+    if(!window.ethereum){
+        alert("未检测到钱包，请安装TP/Metamask钱包");
+        return null;
+    }
+    web3 = new Web3(window.ethereum);
+    const accounts = await window.ethereum.request({method:"eth_requestAccounts"});
+    return accounts[0] || null;
+}
+
+// 自动连接（页面加载，钱包已经授权过就自动带上账号）
+async function autoConnectWallet(){
+    if(!window.ethereum) return;
+    try{
+        web3 = new Web3(window.ethereum);
+        const accounts = await window.ethereum.request({method:"eth_accounts"});
+        if(accounts.length>0){
+            currentAccount = accounts[0];
+            await switchBSC();
+            updateWalletUI();
+        }
+    }catch(err){
+        console.log("自动连接无授权",err);
+    }
+}
+
+// 手动点击连接按钮
+walletBtn.onclick = async function(){
+    if(currentAccount){
+        // 已连接：复制地址
+        navigator.clipboard.writeText(currentAccount);
+        alert("钱包地址已复制："+currentAccount);
+        return;
+    }
+    try{
+        currentAccount = await getAccounts();
+        await switchBSC();
+        updateWalletUI();
+    }catch(err){
+        console.error("用户取消连接",err);
+    }
+}
+
+// 监听钱包账号切换、链切换
+if(window.ethereum){
+    window.ethereum.on("accountsChanged",(accounts)=>{
+        currentAccount = accounts.length>0 ? accounts[0] : null;
+        updateWalletUI();
+    })
+}
+
+// 页面加载执行自动探测
+window.onload = function(){
+    autoConnectWallet();
+}
+</script>
+</body>
+</html>
