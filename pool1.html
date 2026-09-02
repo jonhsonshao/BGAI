@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一号基金池 | 创始节点 NewEra</title>
+<script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header-bar">
+    <div class="logo-wrap" onclick="location.href='index.html'">
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <div class="logo-text">NewEra</div>
+    </div>
+    <div class="header-right">
+        <div class="wallet-box" id="walletBtn">连接钱包</div>
+        <div class="menu-trigger" id="menuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<div class="side-nav" id="sideMenu">
+    <h3>导航菜单</h3>
+    <div class="nav-item" onclick="location.href='index.html'">首页</div>
+    <div class="nav-item" onclick="location.href='pool1.html'">一号基金池</div>
+    <div class="nav-item" onclick="location.href='pool2.html'">二号基金池</div>
+    <div class="nav-item" onclick="location.href='pool3.html'">三号基金池</div>
+    <div class="nav-item" onclick="location.href='pool4.html'">四号质押池</div>
+    <div class="nav-item" onclick="location.href='pool5.html'">五号公平发射</div>
+    <div class="nav-item" onclick="location.href='pool6.html'">六号空投池</div>
+    <div class="nav-item" onclick="location.href='rule.html'">代币发行与获取规则</div>
+    <div class="nav-item" onclick="location.href='share.html'">我的推广链接</div>
+</div>
+
+<div class="main-wrap">
+    <span class="back-link" onclick="history.back()">← 返回上一页</span>
+
+    <h1 class="page-title">一号基金池｜创始节点</h1>
+
+    <div class="limit-tip">🔥 顶级创始节点 · 全网仅开放 10 个名额</div>
+
+    <div class="ref-info" id="refInfo">推荐关系加载中...</div>
+
+    <div class="pool-card">
+        <h3>创始节点 · 核心权益规则</h3>
+        <ul class="rule-list">
+            <li>认购门槛：<strong>1000 USDT / 单份</strong></li>
+            <li>基金池总量：5000 万枚 NEWERA 创始分红池</li>
+            <li>名额限制：全网仅 <strong>10 个名额</strong></li>
+            <li>锁仓周期：锁仓 <strong>2 年</strong></li>
+            <li>释放机制：锁仓期满后，<strong>每月 5% 线性释放</strong></li>
+            <li>分红权益：享受全网 <strong>加权分红优先收益</strong></li>
+            <li>超级推广权益：直推满10个共建节点，额外获得创始节点1%永久份额</li>
+        </ul>
+
+        <div class="buy-panel">
+            <div class="buy-info-row">
+                <span>认购档位</span>
+                <span>1000 USDT 固定单份</span>
+            </div>
+            <div class="buy-info-row">
+                <span>分红池体量</span>
+                <span>5000 万枚 专属加权分红</span>
+            </div>
+            <div class="buy-info-row">
+                <span>名额上限</span>
+                <span>全网仅限 10 席</span>
+            </div>
+            <div class="buy-info-row">
+                <span>锁仓周期</span>
+                <span>锁仓 2 年</span>
+            </div>
+            <div class="buy-info-row">
+                <span>释放方式</span>
+                <span>到期每月5%线性释放</span>
+            </div>
+
+            <button class="join-btn" id="joinBtn">立即加入创始节点</button>
+            <div class="status-tip" id="statusTip"></div>
+        </div>
+    </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+const STORAGE_KEY = "pool1_subscribed_";
+const MAX_LIMIT = 10;
+const AMOUNT_RAW = 1000n * 10n ** 18n;
+const joinBtn = document.getElementById("joinBtn");
+const statusTip = document.getElementById("statusTip");
+const refInfo = document.getElementById("refInfo");
+
+function getSubscribeCount(){
+    let cnt = 0;
+    for(let i = 0; i < localStorage.length; i++){
+        let k = localStorage.key(i);
+        if(k && k.startsWith(STORAGE_KEY)) cnt++;
+    }
+    return cnt;
+}
+
+function hasSubscribed(acc){
+    return localStorage.getItem(STORAGE_KEY + acc.toLowerCase()) === "1";
+}
+
+function setSubscribed(acc){
+    localStorage.setItem(STORAGE_KEY + acc.toLowerCase(), "1");
+}
+
+function updateRefUI(){
+    if(!currentAccount){
+        refInfo.innerText = "💡 连接钱包后查看推荐关系";
+        return;
+    }
+
+    let d = getRefData(currentAccount);
+
+    if(d.superior){
+        refInfo.innerText = "✅ 已绑定上级：" + formatAddress(d.superior) + "｜终身绑定不可更改";
+    }else if(URL_REF){
+        refInfo.innerText = "🤝 检测到推荐链接，认购后自动绑定上级：" + formatAddress(URL_REF);
+    }else{
+        refInfo.innerText = "❕ 暂无推荐上级，自主入驻节点";
+    }
+}
+
+function refreshSubscribeStatus(){
+    let now = getSubscribeCount();
+
+    if(!currentAccount){
+        joinBtn.disabled = true;
+        joinBtn.innerText = "请先连接钱包";
+        statusTip.innerText = `当前已认购 ${now}/${MAX_LIMIT} 名额`;
+        return;
+    }
+
+    if(hasSubscribed(currentAccount)){
+        joinBtn.disabled = true;
+        joinBtn.innerText = "已成为创始节点";
+        statusTip.innerText = `✅ 您已拥有顶级创始节点资格 | 已认购 ${now}/${MAX_LIMIT}`;
+        return;
+    }
+
+    if(now >= MAX_LIMIT){
+        joinBtn.disabled = true;
+        joinBtn.innerText = "名额已满";
+        statusTip.innerText = `❌ 创始节点10席全部爆满`;
+        return;
+    }
+
+    joinBtn.disabled = false;
+    joinBtn.innerText = "立即加入创始节点";
+    statusTip.innerText = `剩余名额：${MAX_LIMIT - now} 席 | 已认购 ${now}/${MAX_LIMIT}`;
+}
+
+const usdtAbi = [
+    {"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}
+];
+
+joinBtn.onclick = async function(){
+    if(!currentAccount){
+        return alert("请先连接钱包");
+    }
+
+    if(hasSubscribed(currentAccount)){
+        return alert("该钱包已认证为创始节点，不可重复认购！");
+    }
+
+    if(getSubscribeCount() >= MAX_LIMIT){
+        return alert("创始节点10个名额已全部爆满，无法继续认购！");
+    }
+
+    const confirmJoin = confirm("确认认购【一号创始节点】？\n即将支付 1000 USDT 成为顶级生态基石节点。");
+    if(!confirmJoin) return;
+
+    try{
+        joinBtn.disabled = true;
+        joinBtn.innerText = "交易处理中...";
+
+        const contract = new web3.eth.Contract(usdtAbi, USDT_CONTRACT);
+        const tx = await contract.methods.transfer(RECEIVE_ADDRESS, AMOUNT_RAW.toString()).send({
+            from: currentAccount
+        });
+
+        if(tx.status){
+            if(URL_REF){
+                bindReferral(currentAccount, URL_REF);
+            }
+
+            setSubscribed(currentAccount);
+            alert("✅ 恭喜！成功入驻【一号创始节点】\n享有5000万枚加权分红+顶级生态权益\n交易哈希：" + tx.transactionHash);
+            updateRefUI();
+            refreshSubscribeStatus();
+        }
+    }catch(err){
+        joinBtn.disabled = false;
+        joinBtn.innerText = "立即加入创始节点";
+
+        const msg = err?.message || "";
+        if(msg.includes("user rejected")){
+            alert("您取消了签名，认购未完成");
+        }else{
+            alert("交易异常：" + msg);
+        }
+    }
+};
+
+window.addEventListener("walletConnected", () => {
+    updateRefUI();
+    refreshSubscribeStatus();
+});
+
+window.addEventListener("walletDisconnected", () => {
+    updateRefUI();
+    refreshSubscribeStatus();
+});
+
+window.addEventListener("accountsChanged", () => {
+    updateRefUI();
+    refreshSubscribeStatus();
+});
+</script>
+
+</body>
+</html>
