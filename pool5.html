@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五号基金池 | 公平发射 NewEra</title>
+<script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header-bar">
+    <div class="logo-wrap" onclick="location.href='index.html'">
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <div class="logo-text">NewEra</div>
+    </div>
+    <div class="header-right">
+        <div class="wallet-box" id="walletBtn">连接钱包</div>
+        <div class="menu-trigger" id="menuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<div class="side-nav" id="sideMenu">
+    <h3>导航菜单</h3>
+    <div class="nav-item" onclick="location.href='index.html'">首页</div>
+    <div class="nav-item" onclick="location.href='pool1.html'">一号基金池</div>
+    <div class="nav-item" onclick="location.href='pool2.html'">二号基金池</div>
+    <div class="nav-item" onclick="location.href='pool3.html'">三号基金池</div>
+    <div class="nav-item" onclick="location.href='pool4.html'">四号质押池</div>
+    <div class="nav-item" onclick="location.href='pool5.html'">五号公平发射</div>
+    <div class="nav-item" onclick="location.href='pool6.html'">六号空投池</div>
+    <div class="nav-item" onclick="location.href='rule.html'">代币发行与获取规则</div>
+    <div class="nav-item" onclick="location.href='share.html'">我的推广链接</div>
+</div>
+
+<div class="main-wrap">
+    <span class="back-link" onclick="history.back()">← 返回上一页</span>
+
+    <h1 class="page-title">五号基金池｜公平发射</h1>
+
+    <div class="pool-card">
+        <h3>公平发射 · 规则说明</h3>
+        <ul class="rule-list">
+            <li>分配数量：2 亿枚</li>
+            <li>参与方式：开盘价公开公平兑换</li>
+            <li>发行单价：0.001 U / 枚</li>
+            <li>兑换周期：100天内兑完截止</li>
+            <li>剩余处理：周期结束未兑完部分全部销毁</li>
+        </ul>
+
+        <div class="buy-panel">
+            <div class="buy-info-row">
+                <span>发行总量</span>
+                <span>2 亿枚</span>
+            </div>
+            <div class="buy-info-row">
+                <span>参与价格</span>
+                <span>0.001 U / 枚</span>
+            </div>
+            <div class="buy-info-row">
+                <span>兑换周期</span>
+                <span>100 天</span>
+            </div>
+            <div class="buy-info-row">
+                <span>剩余机制</span>
+                <span>未兑完全部销毁</span>
+            </div>
+
+            <button class="join-btn" onclick="alert('五号公平发射待开发')">立即兑换</button>
+        </div>
+    </div>
+</div>
+
+<script src="common.js"></script>
+</body>
+</html>
