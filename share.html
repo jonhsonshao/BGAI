@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的推广链接 | NewEra</title>
+<script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header-bar">
+    <div class="logo-wrap" onclick="location.href='index.html'">
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <div class="logo-text">NewEra</div>
+    </div>
+    <div class="header-right">
+        <div class="wallet-box" id="walletBtn">连接钱包</div>
+        <div class="menu-trigger" id="menuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<div class="side-nav" id="sideMenu">
+    <h3>导航菜单</h3>
+    <div class="nav-item" onclick="location.href='index.html'">首页</div>
+    <div class="nav-item" onclick="location.href='pool1.html'">一号基金池</div>
+    <div class="nav-item" onclick="location.href='pool2.html'">二号基金池</div>
+    <div class="nav-item" onclick="location.href='pool3.html'">三号基金池</div>
+    <div class="nav-item" onclick="location.href='pool4.html'">四号质押池</div>
+    <div class="nav-item" onclick="location.href='pool5.html'">五号公平发射</div>
+    <div class="nav-item" onclick="location.href='pool6.html'">六号空投池</div>
+    <div class="nav-item" onclick="location.href='rule.html'">代币发行与获取规则</div>
+    <div class="nav-item" onclick="location.href='share.html'">我的推广链接</div>
+</div>
+
+<div class="main-wrap">
+    <span class="back-link" onclick="history.back()">← 返回上一页</span>
+
+    <h1 class="page-title">我的推广链接</h1>
+
+    <div class="pool-card">
+        <h3>推广说明</h3>
+        <ul class="rule-list">
+            <li>连接钱包后，系统将自动生成专属推广链接。</li>
+            <li>用户通过你的链接首次认购，将与你建立终身推荐关系。</li>
+            <li>共建节点推广奖励：直推1份共建节点奖励10000枚（无锁仓）。</li>
+            <li>私募推广奖励：自身为共建节点时，直推1份私募奖励500枚（无锁仓）。</li>
+            <li>直推满10个共建节点，可额外获得创始节点1%份额权益。</li>
+        </ul>
+
+        <div class="buy-panel">
+            <div class="buy-info-row">
+                <span>我的钱包地址</span>
+                <span id="myAddress">未连接</span>
+            </div>
+
+            <div class="ref-link-box" style="margin-top:18px;">
+                <label style="color:#a2b0e0;font-size:15px;">专属推广链接</label>
+                <div class="link-text" id="shareLink" style="margin-top:10px;padding:14px;background:rgba(0,184,255,0.06);border-radius:10px;color:#00d0ff;word-break:break-all;font-size:14px;">
+                    连接钱包后自动生成
+                </div>
+            </div>
+
+            <button class="enter-btn" id="copyBtn" style="margin-top:18px;">复制推广链接</button>
+        </div>
+    </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+const myAddressEl = document.getElementById("myAddress");
+const shareLinkEl = document.getElementById("shareLink");
+const copyBtn = document.getElementById("copyBtn");
+
+function refreshShareLink(){
+    if(!currentAccount){
+        myAddressEl.innerText = "未连接";
+        shareLinkEl.innerText = "连接钱包后自动生成";
+        return;
+    }
+
+    myAddressEl.innerText = formatAddress(currentAccount);
+
+    const baseUrl = window.location.origin + window.location.pathname.replace("share.html", "");
+
+    shareLinkEl.innerText = baseUrl + "index.html?ref=" + currentAccount;
+}
+
+copyBtn.onclick = async function(){
+    if(!currentAccount){
+        return alert("请先连接钱包");
+    }
+
+    const baseUrl = window.location.origin + window.location.pathname.replace("share.html", "");
+    const link = baseUrl + "index.html?ref=" + currentAccount;
+
+    await navigator.clipboard.writeText(link);
+    alert("推广链接已复制！");
+};
+
+window.addEventListener("walletConnected", refreshShareLink);
+window.addEventListener("walletDisconnected", refreshShareLink);
+window.addEventListener("accountsChanged", refreshShareLink);
+</script>
+
+<style>
+.ref-link-box{
+    background:rgba(255,255,255,0.04);
+    border-radius:12px;
+    padding:16px;
+}
+.link-text{
+    line-height:1.6;
+}
+</style>
+
+</body>
+</html>
