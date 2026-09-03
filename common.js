@@ -61,7 +61,7 @@ function updateWalletUI(){
     if(!walletBtn) return;
 
     if(currentAccount){
-        walletBtn.innerText = "已链接：" + formatAddress(currentAccount);
+        walletBtn.innerText = "" + formatAddress(currentAccount);
     }else{
         walletBtn.innerText = "连接钱包";
     }
