@@ -4,65 +4,336 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NewEra｜代币发行与获取规则</title>
-<link rel="stylesheet" href="style.css">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Roboto,system-ui,sans-serif;
+}
+:root{
+    --era-blue:#00b8ff;
+    --era-purple:#924cff;
+    --era-green:#66e8c0;
+    --era-yellow:#ffc460;
+    --main-gradient:linear-gradient(90deg,#00b8ff,#924cff);
+    --bg-dark:#050510;
+    --card-bg:rgba(20,20,40,0.7);
+    --text-light:#e8edff;
+    --sidebar-width:240px;
+}
+body{
+    background-color:var(--bg-dark);
+    background-image:radial-gradient(circle at 20% 10%,rgba(0,184,255,0.12),transparent 40%),
+    radial-gradient(circle at 80% 80%,rgba(146,76,255,0.12),transparent 40%);
+    color:var(--text-light);
+    min-height:100vh;
+    display:flex;
+}
+/* 侧边栏 */
+.sidebar{
+    width:var(--sidebar-width);
+    background:rgba(15,15,30,0.85);
+    border-right:1px solid rgba(0,184,255,0.2);
+    padding:30px 20px;
+    backdrop-filter:blur(12px);
+    position:fixed;
+    height:100vh;
+    overflow-y:auto;
+}
+.sidebar-title{
+    font-size:20px;
+    font-weight:bold;
+    background:var(--main-gradient);
+    -webkit-background-clip:text;
+    color:transparent;
+    margin-bottom:30px;
+}
+.sidebar-menu a{
+    display:block;
+    color:#b0b8e6;
+    text-decoration:none;
+    padding:12px 14px;
+    border-radius:10px;
+    margin-bottom:8px;
+    transition:0.25s;
+}
+.sidebar-menu a:hover{
+    background:rgba(0,184,255,0.15);
+    color:#fff;
+}
+.sidebar-menu a.active{
+    background:linear-gradient(90deg,rgba(0,184,255,0.2),rgba(146,76,255,0.2));
+    border-left:3px solid var(--era-blue);
+    color:#fff;
+}
+/* 主内容区域 */
+.main-wrap{
+    margin-left:var(--sidebar-width);
+    flex:1;
+    padding:40px 20px;
+}
+.container{
+    max-width:900px;
+    margin:0 auto;
+}
+.back-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    background:rgba(0,184,255,0.12);
+    border:1px solid rgba(0,184,255,0.3);
+    border-radius:8px;
+    color:var(--era-blue);
+    cursor:pointer;
+    margin-bottom:30px;
+    transition:0.3s;
+}
+.back-btn:hover{
+    background:rgba(0,184,255,0.25);
+}
+.page-title{
+    text-align:center;
+    font-size:36px;
+    background:var(--main-gradient);
+    -webkit-background-clip:text;
+    color:transparent;
+    margin-bottom:12px;
+    font-weight:700;
+}
+.page-sub{
+    text-align:center;
+    opacity:0.7;
+    margin-bottom:48px;
+}
+.total-card{
+    background:var(--card-bg);
+    border:1px solid rgba(0,184,255,0.25);
+    border-radius:16px;
+    padding:28px;
+    margin-bottom:32px;
+    backdrop-filter:blur(10px);
+}
+.total-card h2{
+    margin-bottom:12px;
+    color:var(--era-blue);
+}
+.pool-wrap{
+    display:grid;
+    gap:20px;
+}
+.pool-card{
+    background:var(--card-bg);
+    border:1px solid rgba(146,76,255,0.25);
+    border-radius:16px;
+    padding:26px;
+    backdrop-filter:blur(10px);
+    transition:0.3s ease;
+}
+.pool-card:hover{
+    border-color:var(--era-purple);
+    transform:translateY(-4px);
+    box-shadow:0 8px 30px rgba(146,76,255,0.15);
+}
+.pool-title{
+    font-size:22px;
+    margin-bottom:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.tag{
+    font-size:13px;
+    padding:3px 10px;
+    border-radius:20px;
+    background:var(--main-gradient);
+}
+.tag-green{
+    background:linear-gradient(90deg,#48cfad,#66e8c0);
+}
+.tag-yellow{
+    background:linear-gradient(90deg,#ffc460,#ff9f43);
+}
+.rule-item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.rule-item:last-child{
+    border-bottom:none;
+}
+.label{
+    opacity:0.75;
+}
+.value{
+    font-weight:600;
+}
+.tips-block{
+    margin-top:12px;
+    padding:12px;
+    background:rgba(255,255,255,0.04);
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.7;
+    color:#cbd4f0;
+}
+.footer-tip{
+    margin-top:40px;
+    text-align:center;
+    font-size:14px;
+    opacity:0.55;
+    line-height:1.6;
+}
+/* 移动端适配：侧边栏收起 */
+@media(max-width:900px){
+    .sidebar{
+        display:none;
+    }
+    .main-wrap{
+        margin-left:0;
+    }
+}
+@media(max-width:600px){
+    .page-title{
+        font-size:26px;
+    }
+    .pool-card{
+        padding:20px;
+    }
+    .rule-item{
+        font-size:14px;
+    }
+}
+</style>
 </head>
 <body>
-
-<header class="header-bar">
-    <div class="logo-wrap" onclick="location.href='index.html'">
-        <img src="logo.png" alt="Logo" class="logo-img">
-        <div class="logo-text">NewEra</div>
+<!-- 侧边导航栏 -->
+<div class="sidebar">
+    <div class="sidebar-title">NewEra 导航</div>
+    <div class="sidebar-menu">
+        <a href="index.html">首页</a>
+        <a href="pool1.html">一号基金池</a>
+        <a href="pool2.html">二号基金池</a>
+        <a href="pool3.html">三号基金池</a>
+        <a href="pool4.html">四号质押池</a>
+        <a href="pool5.html">五号公平发射</a>
+        <a href="pool6.html">六号空投池</a>
+        <a href="rule.html" class="active">代币发行规则</a>
     </div>
-    <div class="header-right">
-        <div class="wallet-box" id="walletBtn" style="display:none;">连接钱包</div>
-        <div class="menu-trigger" id="menuBtn">
-            <span></span>
-            <span></span>
-            <span></span>
+</div>
+
+<!-- 主内容区域 -->
+<div class="main-wrap">
+    <div class="container">
+        <!-- 返回上一页按钮 -->
+        <div class="back-btn" onclick="history.back()">
+            ← 返回上一页
+        </div>
+
+        <h1 class="page-title">NewEra 代币发行与获取规则</h1>
+        <p class="page-sub">总发行量：21亿枚｜基准发行价：0.001 U / 枚</p>
+
+        <div class="total-card">
+            <h2>📦 整体分配概览</h2>
+            <div class="rule-item">
+                <span class="label">代币全称</span>
+                <span class="value">NewEra</span>
+            </div>
+            <div class="rule-item">
+                <span class="label">代币简称</span>
+                <span class="value">NEW</span>
+            </div>
+            <div class="rule-item">
+                <span class="label">发行总量</span>
+                <span class="value">2100000000 枚（21亿枚）</span>
+            </div>
+            <div class="rule-item">
+                <span class="label">初始发行单价</span>
+                <span class="value">0.001 U / 枚</span>
+            </div>
+        </div>
+
+        <div class="pool-wrap">
+            <div class="pool-card">
+                <div class="pool-title">一号基金池 <span class="tag">创始节点</span></div>
+                <div class="rule-item"><span class="label">分配数量</span><span class="value">5000 万枚</span></div>
+                <div class="rule-item"><span class="label">锁仓周期</span><span class="value">锁仓 2 年</span></div>
+                <div class="rule-item"><span class="label">释放规则</span><span class="value">锁仓期满后，每月线性释放 5%</span></div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">二号基金会 <span class="tag">共建节点</span></div>
+                <div class="rule-item"><span class="label">分配数量</span><span class="value">1 亿枚</span></div>
+                <div class="rule-item"><span class="label">认购规格</span><span class="value">100U / 份</span></div>
+                <div class="rule-item"><span class="label">兑换比例</span><span class="value">100U = 200000枚（单价0.0005U/枚）</span></div>
+                <div class="rule-item"><span class="label">认购名额</span><span class="value">限500名额，先到先得</span></div>
+                <div class="rule-item"><span class="label">锁仓周期</span><span class="value">锁仓 1 年</span></div>
+                <div class="rule-item"><span class="label">释放规则</span><span class="value">锁仓期满后，每月线性释放 4%</span></div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">三号基金池 <span class="tag">基础共识私募</span></div>
+                <div class="rule-item"><span class="label">分配数量</span><span class="value">1 亿枚</span></div>
+                <div class="rule-item"><span class="label">认购规格</span><span class="value">10U / 份</span></div>
+                <div class="rule-item"><span class="label">兑换比例</span><span class="value">10U = 12500枚（单价0.0008U/枚）</span></div>
+                <div class="rule-item"><span class="label">锁仓周期</span><span class="value">锁仓 180 天</span></div>
+                <div class="rule-item"><span class="label">释放规则</span><span class="value">锁仓期满后，每日线性释放 1%</span></div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">四号基金池 <span class="tag tag-green">质押产出</span></div>
+                <div class="rule-item"><span class="label">分配数量</span><span class="value">1 亿枚</span></div>
+                <div class="rule-item"><span class="label">产出规则</span><span class="value">按质押额度每日产出1%</span></div>
+                <div class="rule-item"><span class="label">产出周期</span><span class="value">总计110天</span></div>
+                <div class="rule-item"><span class="label">共识增益</span><span class="value">全程10%数量增益，扩大社区共识</span></div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">五号基金池 <span class="tag tag-yellow">公平发射</span></div>
+                <div class="rule-item"><span class="label">分配数量</span><span class="value">2 亿枚</span></div>
+                <div class="rule-item"><span class="label">参与方式</span><span class="value">开盘价公开公平兑换</span></div>
+                <div class="rule-item"><span class="label">兑换周期</span><span class="value">100天内兑完截止</span></div>
+                <div class="rule-item"><span class="label">剩余处理机制</span><span class="value">周期结束未兑完部分全部销毁</span></div>
+                <div class="tips-block">面向所有用户开放首发参与通道，零门槛共建生态，保障社区公平性。</div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">六号基金池 <span class="tag">生态空投</span></div>
+                <div class="rule-item"><span class="label">空投总量</span><span class="value">2 亿枚</span></div>
+                <div class="rule-item"><span class="label">领取规则</span><span class="value">单地址每24小时可领取一次</span></div>
+                <div class="rule-item"><span class="label">单次空投数量</span><span class="value">每次领取100枚</span></div>
+                <div class="rule-item"><span class="label">合约有效期</span><span class="value">100天，领完即止</span></div>
+                <div class="rule-item"><span class="label">剩余处理机制</span><span class="value">到期未领完空投全部销毁</span></div>
+                <div class="tips-block">普惠式空投赋能社区传播，让更多用户参与、见证生态发展。</div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">基础生态配置</div>
+                <div class="rule-item"><span class="label">LP底池建设</span><span class="value">2000 万枚</span></div>
+                <div class="rule-item"><span class="label">市场共识激励1</span><span class="value">1000 万枚（空投共建节点）</span></div>
+                <div class="rule-item"><span class="label">市值管理团队份额</span><span class="value">3000 万枚</span></div>
+                <div class="rule-item"><span class="label">市值锁仓释放</span><span class="value">锁仓1年，期满每日释放1%</span></div>
+                <div class="rule-item"><span class="label">市场共识激励2</span><span class="value">4000 万枚（基金会投票分配）</span></div>
+                <div class="rule-item"><span class="label">生态建设池</span><span class="value">12.5 亿枚（用于LP挖矿&amp;生态拓展）</span></div>
+            </div>
+
+            <div class="pool-card">
+                <div class="pool-title">推广激励规则</div>
+                <div class="tips-block">
+                    <strong>1、共建节点推广激励：</strong>自身参与共建节点认购，直推1个共建节点，奖励10000枚（无锁仓）；直推满10个共建节点，可获得创始节点1%份额权益。
+                </div>
+                <div class="tips-block">
+                    <strong>2、私募推广激励：</strong>自身参与共建节点认购，每推广1份三号私募额度，奖励500枚（无锁仓，实时到账）。
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-tip">
+            所有代币分配、锁仓、释放、销毁规则均以链上智能合约为准，生态权益由社区与基金会共同治理。
         </div>
     </div>
-</header>
-
-<div class="side-nav" id="sideMenu">
-    <h3>导航菜单</h3>
-    <div class="nav-item" onclick="location.href='index.html'">首页</div>
-    <div class="nav-item" onclick="location.href='pool1.html'">一号基金池</div>
-    <div class="nav-item" onclick="location.href='pool2.html'">二号基金池</div>
-    <div class="nav-item" onclick="location.href='pool3.html'">三号基金池</div>
-    <div class="nav-item" onclick="location.href='pool4.html'">四号质押池</div>
-    <div class="nav-item" onclick="location.href='pool5.html'">五号公平发射</div>
-    <div class="nav-item" onclick="location.href='pool6.html'">六号空投池</div>
-    <div class="nav-item" onclick="location.href='rule.html'">代币发行与获取规则</div>
-    <div class="nav-item" onclick="location.href='share.html'">我的推广链接</div>
 </div>
-
-<div class="main-wrap">
-    <span class="back-link" onclick="history.back()">← 返回上一页</span>
-
-    <h1 class="page-title">NewEra 代币发行与获取规则</h1>
-
-    <div class="allocation-card">
-        <h3>整体发行概览</h3>
-        <ul>
-            <li>代币总发行量：21亿枚</li>
-            <li>基准发行价：0.001 U / 枚</li>
-            <li>一号基金池：5000 万枚，锁仓 2 年，2 年之后按照每月 5% 线性释放</li>
-            <li>二号基金会：1 亿枚，锁仓 1 年，1 年之后按照每月 4% 线性释放，100U/份，单价0.0005U/枚，限500名额</li>
-            <li>三号基金池：1 亿枚，锁仓 180 天，180 天之后按照每天 1% 线性释放，10U/份，单价0.0008U/枚，限8000名额</li>
-            <li>四号基金池：1 亿枚，按质押额每天1%获得，时间周期110天，10%数量增益</li>
-            <li>五号基金池：2 亿枚，开盘价公平兑换，100天内兑完截止，未兑完部分全部销毁</li>
-            <li>六号基金池：2 亿枚，每个地址每24小时可领取一次空投，每次领取100枚，合约有效时间100天，领完为止</li>
-            <li>LP底池建设：2000万枚</li>
-            <li>市场共识激励1：1000万枚，空投给共建节点</li>
-            <li>共建节点推广激励：自身参与认购共建节点，推广一个共建节点，奖励10000枚（不锁仓），直推10个共建节点以上可获创始节点1%的份额</li>
-            <li>私募推广激励：自身参与认购共建节点，推广一份私募，奖励500枚（不锁仓）</li>
-            <li>市值管理团队：3000万枚，锁仓1年，1年之后按照日释放1%</li>
-            <li>市场共识激励2：4000万枚，空投给市场共识成员，由基金会成员投票决议</li>
-            <li>生态建设池：12.5亿，用于LP挖矿与生态拓展</li>
-        </ul>
-    </div>
-</div>
-
-<script src="common.js"></script>
 </body>
 </html>
